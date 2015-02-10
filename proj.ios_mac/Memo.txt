@@ -1,0 +1,91 @@
+ワンセット
+
+// 以後、メンバー変数を追加したいときはこのようにプロパティの設定と、初期化構文での初期化、
+// デストラクタでの解放をワンセットで行ってください
+/*
+
+ワンセット
+
+MainScene.h
+
+// 他のクラスからnewを使って生成できないようにするためにprotectedに宣言しています。
+protected:
+
+    // コンストラクタ
+    MainScene();
+
+    // デストラクタ
+    virtual ~MainScene();
+
+
+// プロパティの設定
+// _player変数と、getPlayer()メソッド、setPlayer(Sprite *)メソッドが自動的に実装される
+    CC_SYNTHESIZE_RETAIN(cocos2d::Sprite *, _player, player);   // ※重要
+
+// コンストラクタ:オブジェクトの生成時に呼び出されるメソッド
+MainScene.cpp
+
+MainScene::MainScene()
+// _playerをNULLで初期化
+: _player(NULL)                         // ※重要
+{
+
+}
+
+// デストラクタ:オブジェクトが開放（消える）時に呼び出さるメソッド
+MainScene::~MainScene()
+{
+
+    // デストラクタ CC_SAFE_RELEASE_NULLを使ってメンバー変数をrelease
+    // _playerをreleaseしてメモリーリークを防ぎます
+    CC_SAFE_RELEASE_NULL(_player);      // ※重要
+
+}
+*/
+
+cocos2d-x入門編 – コンストラクタとデストラクタについて -
+http://programming-ios.com/cocos2d_x-construct-destruct/
+
+デストラクタ
+コンストラクタにチルダを付けたものはデストラクタと言ってObjective-Cで言うdeallocのようなものです。
+Objective-Cのように[super dealloc]としなくても自動で親クラスのデストラクタも呼ばれるようです。
+デストラクタ:オブジェクトが開放（消える）時に呼び出さるメソッド
+
+GameLayer::~GameLayer()
+{
+    if(bullets)
+    {
+        bullets->release();
+        bullets = NULL;
+    }
+
+    if(asteroids)
+    {
+        asteroids->release();
+        asteroids = NULL;
+    }
+}
+
+
+_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+auto sprite = Sprite::create("player.png");
+
+// 3秒かけてx方向に30だけ動かすアクション
+auto move = MoveBy::create(3, Vec2(30, 0));
+
+// 1.5秒かけてサイズを2倍まで拡大するアクション
+auto scale = ScaleTo::create(1.5, 2);
+
+// 3秒かけて180度回転するアクション
+auto rotate = RotateBy::create(3, 180);
+
+// これら3つのアクションを順番に実行するアクション
+auto sequence = Sequence::create(move, scale, rotate, NULL);
+
+// 作成したアクションをspriteに適用する
+sprite->runAction(sequence);
+
+_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+
